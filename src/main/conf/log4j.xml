@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File"
+			value="/home/work/tmp/fc_test${log_file_suffix}.log" />
+		<param name="DatePattern" value=".yyyyMMddHH" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%-5p %d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] %l [%m]%n" />
+		</layout>
+	</appender>
+
+	<root>
+        <priority value ="error" /> 
+        <appender-ref ref="file" /> 
+    </root>
+	<logger name="com.doopey" additivity="false">
+		<level value="${log4j_level}" />
+		<appender-ref ref="file" />
+	</logger>
+
+</log4j:configuration>

@@ -7,49 +7,26 @@
     <groupId>com.doopey.test</groupId>
     <artifactId>test-service</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
             <version>2.6.0-mdh3.6.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.thrift</groupId>
+                    <artifactId>libthrift</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.xiaomi.milife</groupId>
+            <artifactId>milife-recommend-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.xiaomi.data</groupId>
-            <artifactId>recommend-service-common</artifactId>
-            <version>1.6-SNAPSHOT</version>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.xiaomi.miliao</groupId>-->
-            <!--<artifactId>accessTrack</artifactId>-->
-            <!--<version>0.0.2</version>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.xiaomi</groupId>
-            <artifactId>xiaomi-common-thrift</artifactId>
-            <version>2.6.24</version>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.thrift</groupId>-->
-            <!--<artifactId>thrift</artifactId>-->
-            <!--<version>0.5.0-mdf1.0.2</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.xiaomi.data</groupId>-->
-            <!--<artifactId>recommend-common</artifactId>-->
-            <!--<version>1.0-SNAPSHOT</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.xiaomi.data</groupId>-->
-            <!--<artifactId>data-platform-spec</artifactId>-->
-            <!--<version>0.0.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.xiaomi.data</groupId>
-            <artifactId>data-platform-spec-profile</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <profiles>
@@ -96,7 +73,7 @@
                 </property>
             </activation>
             <properties>
-                <log4j_level>error</log4j_level>
+                <log4j_level>debug</log4j_level>
                 <!-- zookeeper account -->
                 <zookeeper_use>true</zookeeper_use>
                 <zookeeper_host>c3</zookeeper_host>
@@ -115,22 +92,23 @@
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <fork>true</fork>
-                    <verbose>true</verbose>
-                    <encoding>UTF-8</encoding>
-                    <compilerArguments>
-                        <sourcepath>
-                            ${project.basedir}/src/main/java
-                        </sourcepath>
-                    </compilerArguments>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<source>1.6</source>-->
+                    <!--<target>1.6</target>-->
+                    <!--<fork>true</fork>-->
+                    <!--<verbose>true</verbose>-->
+                    <!--<encoding>UTF-8</encoding>-->
+                    <!--<compilerArguments>-->
+                        <!--<sourcepath>-->
+                            <!--${project.basedir}/src/main/java-->
+                        <!--</sourcepath>-->
+                    <!--</compilerArguments>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
@@ -144,14 +122,62 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <configurationDirectory>conf</configurationDirectory>-->
+                    <configurationSourceDirectory>./src/main/conf</configurationSourceDirectory>
+                    <filterConfigurationDirectory>true</filterConfigurationDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
                     <programs>
                         <program>
                             <mainClass>com.doopey.test.user.Worker</mainClass>
+                            <jvmSettings>
+                                <systemProperties>
+                                    <systemProperty>java.security.krb5.conf=resources/krb5.conf</systemProperty>
+                                    <systemProperty>hadoop.property.hadoop.security.authentication=kerberos</systemProperty>
+                                    <systemProperty>hadoop.property.hadoop.client.kerberos.principal=h_o2o@XIAOMI.HADOOP</systemProperty>
+                                    <systemProperty>hadoop.property.hadoop.client.keytab.file=resources/h_o2o.keytab</systemProperty>
+                                </systemProperties>
+                            </jvmSettings>
                             <name>start-worker.sh</name>
+                        </program>
+                        <program>
+                            <mainClass>com.doopey.test.user.Test</mainClass>
+                            <name>start-test.sh</name>
                         </program>
                     </programs>
                 </configuration>
             </plugin>
+
+
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-war-plugin</artifactId>-->
+                <!--<version>2.0.2</version>-->
+                <!--<configuration>-->
+                    <!--<webResources>-->
+                        <!--<resource>-->
+                            <!--<filtering>true</filtering>-->
+                            <!--<directory>${project.basedir}/src/main/webapp/WEB-INF-->
+                            <!--</directory>-->
+                            <!--<includes>-->
+                                <!--<include>**/*.xml</include>-->
+                                <!--<include>**/*.properties</include>-->
+                            <!--</includes>-->
+                            <!--<targetPath>WEB-INF</targetPath>-->
+                        <!--</resource>-->
+                        <!--<resource>-->
+                            <!--<filtering>true</filtering>-->
+                            <!--<directory>${project.basedir}/src/main/conf-->
+                            <!--</directory>-->
+                            <!--<includes>-->
+                                <!--<include>*</include>-->
+                            <!--</includes>-->
+                            <!--<targetPath>WEB-INF/classes</targetPath>-->
+                        <!--</resource>-->
+                    <!--</webResources>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
         </plugins>
     </build>
 

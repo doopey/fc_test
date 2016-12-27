@@ -1,23 +1,32 @@
 package com.doopey.test.user;
 
-import com.xiaomi.data.recommend.common.model.RankerItem;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
- * Created by doopey on 16-11-21.
+ * Created by fangchen on 16-11-21.
  */
 public class Test {
 
-    public static void main(String[] args) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        for (int i = 0; i < 1000; i ++) {
-            list.add(i);
-        }
+    private static Logger logger = LoggerFactory.getLogger(Test.class);
 
-        Collections.shuffle(list);
-        for (Integer i : list) {
-            System.out.println(i);
+    public static void main(String[] args) {
+        System.out.println(test());
+
+    }
+
+    public static int test() {
+        int x = 1;
+        try {
+            return x++;
+        } finally {
+            ++x;
         }
     }
 }
